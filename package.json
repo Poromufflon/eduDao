@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Poromufflon/eduDao#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.7.3"
+    "@openzeppelin/contracts": "^4.7.3",
+    "tribute-contracts": "^2.6.3"
   }
 }
