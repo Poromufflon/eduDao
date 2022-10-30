@@ -24,7 +24,16 @@ const config: HardhatUserConfig  = {
   paths:{
     artifacts: './svelte/src/contracts',
   },
-  solidity: "0.8.9",
+  solidity: {
+    version: "0.8.9",
+    settings:{
+        optimizer: {
+          enabled: true,
+          runs: 1000,
+        },
+    },
+  },
+  
   namedAccounts: {
     deployer:{
       default: 0,
