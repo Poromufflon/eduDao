@@ -1,14 +1,8 @@
 <script>
-    import { connected, chainId, defaultEvmStores } from "svelte-web3";
-    import EduDaoLogo from "../images/EduDaoLogo2.svelte";
-    import ComponentContentButtons from "../components/ComponentContentButtons.svelte";
-    import ComponentLerninhalte from "../components/Lerninhalt.svelte";
-  
     let connectText = "Connect to MetaMask";
   
     function handleClick() {
       if (window.ethereum) {
-        defaultEvmStores.setProvider();
       }
     }
   </script>

@@ -1,8 +1,5 @@
 <script>
-  import { connected, chainId, defaultEvmStores } from "svelte-web3";
   import EduDaoLogo from "./images/EduDaoLogo2.svelte";
-  import ComponentContentButtons from "./components/ComponentContentButtons.svelte";
-  import ComponentLerninhalte from "./components/ComponentLerninhalte.svelte";
   import Router from "svelte-spa-router";
   import HomePage from "./routes/HomePage.svelte"
   import AccountPage from "./routes/AccountPage.svelte";
@@ -11,6 +8,9 @@
   import NotFound from "./routes/NotFound.svelte";
   import Content from "./routes/Content.svelte";
   let current;
+  // A Web3Provider wraps a standard Web3 provider, which is
+  // what MetaMask injects as window.ethereum into each page
+const provider = new ethers.providers.Web3Provider(window.ethereum)
   let routes = {
     "/": HomePage,
     "/account": AccountPage,
@@ -19,16 +19,6 @@
     "/content/:id": Content, 
 
     "*": NotFound
-  }
-
-  let adress = "";
-  let connectText = "Connect to MetaMask";
-  let activeButton = 3;
-
-  function handleClick() {
-    if (window.ethereum) {
-      defaultEvmStores.setProvider();
-    }
   }
 </script>
 

@@ -3,7 +3,7 @@
     export let adress = "none";
     export let eduPower = 0;
     export let eduToken = 0;
-    export let ether = 0;
+    export let ether = "0";
     export let userCount = 0;
     export let teacherCount = 0;
     export let modCount = 0;
