@@ -9,21 +9,18 @@ module.exports = {
     logs: true,
     rtl: false,
     prefix: "",
-    darkTheme: "dark",
     themes:[
       {
         mytheme: {
-          mytheme: {
-            "primary": "#02b2e2",
-            "secondary": "#ffadcb",
-            "accent": "#ffdd96",
-            "neutral": "#282730",
-            "base-100": "#373249",
-            "info": "#80CCDB",
-            "success": "#159E4C",
-            "warning": "#EEC42B",
-            "error": "#E31C29",
-          },
+          "primary": "#5C7F67",
+          "secondary": "#ECF4E7",
+          "accent": "#FAE5E5",
+          "neutral": "#5D5656",
+          "base-100": "#E9E7E7",
+          "info": "#3ABFF8",
+          "success": "#36D399",
+          "warning": "#FBBD23",
+          "error": "#F87272",
         }
       }
     ]
