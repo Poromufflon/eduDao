@@ -47,25 +47,6 @@
             <div class="stat-value">{ether}</div>
           </div>
         </div>
-        <div class="stats stats-vertical lg:stats-horizontal shadow mt-6">
-          <div class="stat">
-            <div class="stat-title">Nutzer</div>
-            <div class="stat-value">{userCount}</div>
-            <div class="stat-desc">(dummy)</div>
-          </div>
-
-          <div class="stat">
-            <div class="stat-title">Lehrer</div>
-            <div class="stat-value">{teacherCount}</div>
-            <div class="stat-desc">(dummy)</div>
-          </div>
-
-          <div class="stat">
-            <div class="stat-title">Moderatoren</div>
-            <div class="stat-value">{modCount}</div>
-            <div class="stat-desc">(dummy)</div>
-          </div>
-        </div>
       </div>
     </div>
   </div>

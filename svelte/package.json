@@ -19,6 +19,7 @@
   "dependencies": {
     "@metamask/jazzicon": "^2.0.0",
     "ethers": "^5.7.2",
+    "jsonata": "^1.8.6",
     "svelte-spa-router": "^3.3.0"
   }
 }

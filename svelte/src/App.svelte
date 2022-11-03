@@ -7,7 +7,6 @@
   import VotingPage from "./routes/VotingPage.svelte";
   import NotFound from "./routes/NotFound.svelte";
   import Content from "./routes/Content.svelte";
-  let current;
   // A Web3Provider wraps a standard Web3 provider, which is
   // what MetaMask injects as window.ethereum into each page
 const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -42,6 +41,9 @@ const provider = new ethers.providers.Web3Provider(window.ethereum)
             <a href="#/account" class="btn btn-ghost normal-case text-xl">Account</a>
         </div>
       </div>
+    </div>
+    <div class="text-right mt-10 mr-8">
+      <button class="btn">EduPower kaufen</button>
     </div>
   </div>
 

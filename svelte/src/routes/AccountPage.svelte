@@ -1,12 +1,11 @@
 <script>
-  import { BigNumber, ethers } from "ethers";
-
-
+  import { ethers } from "ethers";
+  import jsonata from "jsonata";
   import ComponentAccountDetails from "../components/ComponentAccountDetails.svelte";
 
   let connectText = "Mit MetaMask Account verbinden";
   let accountAdress;
-  let role = "none";
+  let role = "Gast";
   let adress = "wow";
   let eduPower = 0;
   let eduToken = 0;
@@ -14,6 +13,8 @@
   let userCount = 0;
   let teacherCount = 0;
   let modCount = 0;
+
+  
 
   async function onClickConnectWallet() {
     // A Web3Provider wraps a standard Web3 provider, which is
@@ -31,8 +32,8 @@
     const balanceInEth = ethers.utils.formatEther(balance)
     ether = balanceInEth.slice(0,6)
     adress = accounts[0].slice(0,12) + "...";
+
   }
-  
   
   $: metaMaskConnected = false;
 </script>
