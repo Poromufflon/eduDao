@@ -8,10 +8,9 @@
   let connectText = "Mit MetaMask Account verbinden";
   //maybe safe account adress in local storage ? 
   let accountAdress;
-  let transactions = [];
-  let firstAdress = "";
 
-  async function onClickConnectWallet() {
+
+  async function connectWallet() {
     // A Web3Provider wraps a standard Web3 provider, which is
     // what MetaMask injects as window.ethereum into each page
     const provider = new ethers.providers.Web3Provider(window.ethereum)
@@ -22,21 +21,28 @@
     // For this, you need the account signer...
     const signer = provider.getSigner()
 
-    metaMaskConnected = true;
+    let transactions = [];
     //safes the logged in account adress
     accountAdress = accounts[0];
     const transactionCount = await provider.getTransactionCount(accountAdress)
-    for(let i = 0; i<transactionCount;i++){
+    for(let i = 1; i<transactionCount;i++){
       const transaction = await provider.getBlockWithTransactions(i);
       transactions.push(transaction)
     }
-    console.log(transactions)
+    if(transactions.length != 0){
+      metaMaskConnected = true;
+      return transactions;
+    }else{
+      metaMaskConnected = false;
+      throw new Error("didn't work")
+    }
   }
-  function w(){
-    console.log(transactions)
+  let promiseTx = connectWallet()
+
+  function onClickConnectWallet(){
+    promiseTx = connectWallet();
   }
-  let cmps = [];
-  $: cmps = cmps.filter(el => el);
+
   $: metaMaskConnected = false;
 </script>
 
@@ -88,31 +94,17 @@
         <ComponentContractCreator/>
       </div>
     </div>
-    <div class="text-center">
-      <div class="grid grid-cols-1 gap-2">
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <div class="grid grid-cols-4 gap-4">
-              <div class="bg-neutral-focus text-neutral-content rounded-full w-12 ">
-                <span>TX</span>
-              </div>
-              <div on:load={w}  class="text-center mt-3">
-                {transactions[0]}
-              </div>
-              <div>
-              </div>
-              <div>
-                  <div class="ml-4">
-                      Von:0x0
-                      <div>
-                        Nach:0x0
-                      </div>
-                    </div>
-              </div> 
-            </div>
-          </div>
-        </div>
+    <div class="grid grid-cols-1 gap-2">
+    {#await promiseTx}
+      <!-- promise is pending -->
+      <div class="text-center">
+        <button class="btn btn-square loading"></button>
       </div>
+    {:then value}
+        {#each value as t}
+          <ComponentTransactions txAdress={t.transactions[0].hash} txFrom={t.transactions[0].from} txTo={t.transactions[0].to}/>
+        {/each}
+    {/await}
     </div>
     <div class="text-center">
       <div class="grid grid-cols-1 gap-2">
