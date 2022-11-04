@@ -1,5 +1,5 @@
 <script>
-  import { ethers } from "ethers";
+  import {utils, ethers } from "ethers";
   import ComponentActiveVotes from "../components/ComponentActiveVotes.svelte";
   import ComponentContractCreator from "../components/ComponentContractCreator.svelte";
   import ComponentTransactions from "../components/ComponentTransactions.svelte";
@@ -36,8 +36,9 @@
       metaMaskConnected = false;
       throw new Error("didn't work")
     }
+    
   }
-  let promiseTx = connectWallet()
+  let promiseTx;
 
   function onClickConnectWallet(){
     promiseTx = connectWallet();
