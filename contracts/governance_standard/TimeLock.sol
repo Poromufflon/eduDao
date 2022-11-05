@@ -12,4 +12,7 @@ contract TimeLock is TimelockController {
     address[] memory proposers,
     address[] memory executors
   ) TimelockController(minDelay, proposers, executors) {}
+   fallback()external{
+
+  }
 }

@@ -20,4 +20,7 @@ contract Box is Ownable {
   function retrieve() public view returns (uint256) {
     return value;
   }
+   fallback()external{
+
+  }
 }
