@@ -28,12 +28,10 @@
     // send ether and pay to change state within the blockchain.
     // For this, you need the account signer...
     signer = provider.getSigner();
-
     let transactions = [];
     //safes the logged in account adress
     accountAdress = accounts[0];
-    const transactionCount = await provider.getTransactionCount(accountAdress);
-
+    const transactionCount = await provider.getTransactionCount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"); 
     const blockNumber = await provider.getBlockNumber();
     block = blockNumber;
     if (blockNumber < 10) {
@@ -74,9 +72,9 @@
 
   async function proposeBoxContract() {
     if (localStorage.getItem("proposalID") == null && proposalExists == false) {
-      let args = [35];
+      let args = [69];
       let functionToCall = "store";
-      let proposalDescription = "Contract#1www2221";
+      let proposalDescription = "Contract#1";
 
       console.log("Step 1: declare governor for Ethers");
       const governor = new ethers.Contract(

@@ -2,6 +2,7 @@
   import { ethers } from "ethers";
   import jsonata from "jsonata";
   import ComponentAccountDetails from "../components/ComponentAccountDetails.svelte";
+  import GovernanceToken from "../contracts/contracts/GovernanceToken.sol/GovernanceToken.json";
 
   let connectText = "Mit MetaMask Account verbinden";
   let accountAdress;
@@ -30,8 +31,17 @@
     accountAdress = accounts[0];
     const balance = await provider.getBalance(accountAdress)
     const balanceInEth = ethers.utils.formatEther(balance)
+
+    const governorToken = new ethers.Contract(
+          "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+          GovernanceToken.abi,
+          signer
+        );
+    
+    const eduPowerBalance = await governorToken.balanceOf(accountAdress)
+    eduPower = eduPowerBalance
     ether = balanceInEth.slice(0,6)
-    adress = accounts[0].slice(0,12) + "...";
+    adress = accountAdress.slice(0,12) + "...";
 
   }
   
@@ -65,7 +75,7 @@
   {:else if metaMaskConnected}
     <div />
     <div>
-      <ComponentAccountDetails {role} {adress} {ether}/>
+      <ComponentAccountDetails {role} {adress} {ether} {eduPower}/>
     </div>
     <div />
   {/if}

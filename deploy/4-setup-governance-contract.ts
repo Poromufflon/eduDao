@@ -1,11 +1,13 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+// @ts-ignore
 import { ethers } from "hardhat";
 import { ADRESS_ZERO } from "../helper-hardhat-config";
 
 const setupContracts: DeployFunction = async function (
     hre: HardhatRuntimeEnvironment
 ) {
+    // @ts-ignore
     const {getNamedAccounts,deployments} = hre;
     const { deploy, log, get } = deployments;
     const { deployer } = await getNamedAccounts();
@@ -23,6 +25,7 @@ const setupContracts: DeployFunction = async function (
     await proposerTx.wait(1);
     const executorTx  = await timeLock.grantRole(executorRole, ADRESS_ZERO);
     await executorTx.wait(1);
+    //revoke admin role for dezentralisation
     const revokeTx = await timeLock.revokeRole(adminRole, deployer);
     await revokeTx.wait(1);
 };

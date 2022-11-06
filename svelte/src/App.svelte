@@ -1,4 +1,5 @@
 <script>
+   import {ethers} from "ethers";
   import EduDaoLogo from "./images/EduDaoLogo2.svelte";
   import Router from "svelte-spa-router";
   import HomePage from "./routes/HomePage.svelte"
@@ -7,9 +8,38 @@
   import VotingPage from "./routes/VotingPage.svelte";
   import NotFound from "./routes/NotFound.svelte";
   import Content from "./routes/Content.svelte";
-  // A Web3Provider wraps a standard Web3 provider, which is
-  // what MetaMask injects as window.ethereum into each page
-const provider = new ethers.providers.Web3Provider(window.ethereum)
+  import GovernanceToken from "./contracts/contracts/GovernanceToken.sol/GovernanceToken.json";
+
+  async function handleClickBuyPower(){
+     // A Web3Provider wraps a standard Web3 provider, which is
+    // what MetaMask injects as window.ethereum into each page
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // MetaMask requires requesting permission to connect users accounts
+    const accounts = await provider.send("eth_requestAccounts", []);
+    // The MetaMask plugin also allows signing transactions to
+    // send ether and pay to change state within the blockchain.
+    // For this, you need the account signer...
+    const signer = provider.getSigner();
+    const accountAdress = accounts[0];
+    console.log("Step 1: declare governorToken for Ethers");
+    const governorToken = new ethers.Contract(
+          "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+          GovernanceToken.abi,
+          signer
+        );
+    console.log("declaring...");
+    console.log("Step 2: mint token");
+    const contrat= await governorToken.transfer("0x70997970C51812dc3A010C7d01b50e0d17dc79C8",100)
+    //
+    //const eduPowerBalance = await governorToken.transferFrom("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","0x70997970C51812dc3A010C7d01b50e0d17dc79C8",100)
+    //console.log(eduPowerBalance)
+    console.log("token minted")
+      
+
+
+  }
+ 
+
   let routes = {
     "/": HomePage,
     "/account": AccountPage,
@@ -43,7 +73,7 @@ const provider = new ethers.providers.Web3Provider(window.ethereum)
       </div>
     </div>
     <div class="text-right mt-10 mr-8">
-      <button class="btn">EduPower kaufen</button>
+      <button on:click={handleClickBuyPower} class="btn">EduPower kaufen</button>
     </div>
   </div>
 
