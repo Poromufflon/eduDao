@@ -1,158 +1,254 @@
 <script>
-  import {utils, ethers, providers } from "ethers";
+  import { utils, ethers, providers } from "ethers";
   import ComponentActiveVotes from "../components/ComponentActiveVotes.svelte";
   import ComponentContractCreator from "../components/ComponentContractCreator.svelte";
   import ComponentTransactions from "../components/ComponentTransactions.svelte";
   import ComponentVoting from "../components/ComponentVoting.svelte";
   import GovernorContract from "../contracts/contracts/governance_standard/GovernorContract.sol/GovernorContract.json";
   import BoxContract from "../contracts/contracts/Box.sol/Box.json";
+
   let connectText = "Mit MetaMask Account verbinden";
-  //maybe safe account adress in local storage ? 
+  //maybe safe account adress in local storage ?
   let accountAdress;
   let signer;
   let provider;
-
+  let proposalExists = false;
+  let proposalVoted = false;
+  let proposalVoteWay;
+  let block = 9;
+  let blockAfterVote = 9;
 
   async function connectWallet() {
-
     // A Web3Provider wraps a standard Web3 provider, which is
     // what MetaMask injects as window.ethereum into each page
-    provider = new ethers.providers.Web3Provider(window.ethereum)
+    provider = new ethers.providers.Web3Provider(window.ethereum);
     // MetaMask requires requesting permission to connect users accounts
     const accounts = await provider.send("eth_requestAccounts", []);
     // The MetaMask plugin also allows signing transactions to
     // send ether and pay to change state within the blockchain.
     // For this, you need the account signer...
-    signer = provider.getSigner()
+    signer = provider.getSigner();
 
     let transactions = [];
     //safes the logged in account adress
     accountAdress = accounts[0];
-    const transactionCount = await provider.getTransactionCount(accountAdress)
-    for(let i = 1; i<transactionCount;i++){
-      const transaction = await provider.getBlockWithTransactions(i);
-      transactions.push(transaction)
+    const transactionCount = await provider.getTransactionCount(accountAdress);
+
+    const blockNumber = await provider.getBlockNumber();
+    block = blockNumber;
+    if (blockNumber < 10) {
+      localStorage.clear();
+    } else {
+      if (localStorage.getItem("proposalID") != null) {
+        proposalExists = true;
+      }
+      if (localStorage.getItem("Voted") != null) {
+        proposalVoted = true;
+        proposalVoteWay = localStorage.getItem("Voted");
+      }
     }
-    if(transactions.length != 0){
-      provider.on("block", (currentBlock) => {
-      console.log("Block new BLock mined")
-      console.log(currentBlock)
-      })
+      for (let i = 1; i < transactionCount; i++) {
+      const transaction = await provider.getBlockWithTransactions(i);
+      transactions.push(transaction);
+      }
+    
+    if (transactions.length != 0) {
+      setTimeout(() => {
+        provider.on(
+          "block",
+          (currentBlock) => {
+            console.log("Current Block: ");
+            console.log(currentBlock);
+            block = currentBlock;
+          },
+          1000
+        );
+      });
       metaMaskConnected = true;
       return transactions;
-    }else{
+    } else {
       metaMaskConnected = false;
-      throw new Error("didn't work")
+      throw new Error("didn't work");
     }
-    
   }
 
-  async function proposeBoxContract(){
+  async function proposeBoxContract() {
+    if (localStorage.getItem("proposalID") == null && proposalExists == false) {
+      let args = [35];
+      let functionToCall = "store";
+      let proposalDescription = "Contract#1www2221";
 
-    let args = [69];
-    let functionToCall = "store";
-    let proposalDescription= "Contract#1";
+      console.log("Step 1: declare governor for Ethers");
+      const governor = new ethers.Contract(
+        "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+        GovernorContract.abi,
+        signer
+      );
+      console.log("Governor declared...");
+      const box = new ethers.Contract(
+        "0xa513e6e4b8f2a923d98304ec87f64353c4d5c853",
+        BoxContract.abi,
+        signer
+      );
+      console.log("Step 2: declare box for Ethers");
+      const encodedFunctionCall = box.interface.encodeFunctionData(
+        functionToCall,
+        args
+      );
+      console.log("Box declared...");
+      console.log(`Proposing ${functionToCall} on ${box.address} with ${args}`);
+      console.log(`Proposal Description: \n ${proposalDescription}`);
+      console.log("Step 3: propose from governor");
 
-    const governor = new ethers.Contract("0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",GovernorContract.abi,signer)
-    
-    const box =  new ethers.Contract("0xa513e6e4b8f2a923d98304ec87f64353c4d5c853",BoxContract.abi,signer)
-    
-    const encodedFunctionCall = box.interface.encodeFunctionData(functionToCall,args)
+      const proposeTx = await governor.propose(
+        [box.address],
+        [0],
+        [encodedFunctionCall],
+        proposalDescription
+      );
+      console.log("proposed...");
+      const proposeReceipt = await proposeTx.wait(1);
+      const proposalId = await proposeReceipt.events[0].args.proposalId;
+      console.log(`Proposed with proposal ID: \n ${proposalId}`);
+      storeProposalId(proposalId);
+      const proposalState = await governor.state(proposalId);
+      const proposalVotingDelay = await governor.votingDelay();
+      const proposalVotingPeriod = await governor.votingPeriod();
+      console.log(`Current Proposal State: ${proposalState}`);
+      console.log(`proposalVotingDelay: ${proposalVotingDelay}`);
+      console.log(`proposalVotingPeriod: ${proposalVotingPeriod}`);
 
-    console.log(`Proposing ${functionToCall} on ${box.address} with ${args}`)
-    console.log(`Proposal Description: \n ${proposalDescription}`)
-
-    const proposeTx = await governor.propose(
-      [box.address],
-      [0],
-      [encodedFunctionCall],
-      proposalDescription
-    )
-    const proposeReceipt = await proposeTx.wait(1)
-    const proposalId = await proposeReceipt.events[0].args.proposalId
-    console.log(`Proposed with proposal ID: \n ${proposalId}`)
-    storeProposalId(proposalId)
-    const proposalState = await governor.state(proposalId)
-    const proposalVotingDelay = await governor.votingDelay()
-    const proposalVotingPeriod = await governor.votingPeriod()
-    console.log(`Current Proposal State: ${proposalState}`)
-    console.log(`proposalVotingDelay: ${proposalVotingDelay}`)
-    console.log(`proposalVotingPeriod: ${proposalVotingPeriod}`)
+      proposalExists = true;
+    } else {
+      console.log("Error: Proposal already exists!");
+    }
   }
 
-  function storeProposalId(proposalId){
-    localStorage.setItem("proposalID",proposalId)
+  function storeProposalId(proposalId) {
+    localStorage.setItem("proposalID", proposalId);
   }
 
   // 0 = Against, 1 = For, 2 = Abstain for this example
-  async function vote(voteWay){
-    let voteNumber = 0;
-    if(voteWay == "yes"){
-      voteNumber = 1;
-    }
-    if(voteWay == "no"){
-      voteNumber = 0;
-    }
-    console.log(`Voting with ... ${voteWay}`);
-    const proposalId = localStorage.getItem("proposalID");
-    const reason =  "test";
+  async function vote(voteWay) {
+    if (proposalExists == true) {
+      if (proposalVoted == false) {
+        let voteNumber = 0;
+        if (voteWay == "yes") {
+          voteNumber = 1;
+        }
+        if (voteWay == "no") {
+          voteNumber = 0;
+        }
+        console.log(`Voting with ... ${voteWay}`);
+        const reason = "test";
 
-    const governor = new ethers.Contract("0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",GovernorContract.abi,signer);
-    const voteTx = await governor.castVoteWithReason(proposalId, voteNumber,reason);
-    const voteTxReceipt = await voteTx.wait(1);
-    console.log(voteTxReceipt.events[0].args.reason)
-    const proposalState = await governor.state(proposalId)
-    console.log(`Current Proposal State: ${proposalState}`)
+        const governor = new ethers.Contract(
+          "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+          GovernorContract.abi,
+          signer
+        );
+        const proposalId = localStorage.getItem("proposalID");
+
+        const voteTx = await governor.castVoteWithReason(
+          proposalId,
+          voteNumber,
+          reason
+        );
+        const voteTxReceipt = await voteTx.wait(1);
+        console.log(voteTxReceipt.events[0].args.reason);
+        const proposalState = await governor.state(proposalId);
+        console.log(`Current Proposal State: ${proposalState}`);
+
+        blockAfterVote = block;
+        proposalVoted = true;
+        localStorage.setItem("Voted", voteWay);
+      } else {
+        console.log("Already Voted");
+      }
+    } else {
+      console.log("Please create a proposal first");
+    }
   }
 
-  async function queueAndExecute(){
-    let args = [69];
-    let functionToCall = "store";
-    let proposalDescription= "Contract#1";
-    const box =  new ethers.Contract("0xa513e6e4b8f2a923d98304ec87f64353c4d5c853",BoxContract.abi,signer)
-    const encodedFunctionCall = box.interface.encodeFunctionData(functionToCall,args)
-    const descriptionHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(proposalDescription))
-    const governor = new ethers.Contract("0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",GovernorContract.abi,signer);
-    console.log("Queueing...")
-    const queueTx = await governor.queue([box.address], [0], [encodedFunctionCall], descriptionHash)
-    await queueTx.wait(1)
-  
-    console.log("Executing...")
-    // this will fail on a testnet because you need to wait for the MIN_DELAY!
-    const executeTx = await governor.execute(
-    [box.address],
-    [0],
-    [encodedFunctionCall],
-    descriptionHash
-    )
-    await executeTx.wait(1)
-    console.log(`Box value: ${await box.retrieve()}`)
+  async function queueAndExecute() {
+    if (proposalExists == true) {
+      if(proposalVoted == false){
+        console.log("Please Vote first")
+      }else if(block < blockAfterVote+5){
+        console.log("Still in Voting Time")  
+      }else{
+        let args = [69];
+        let functionToCall = "store";
+        let proposalDescription = "Contract#1";
+        const box = new ethers.Contract(
+          "0xa513e6e4b8f2a923d98304ec87f64353c4d5c853",
+          BoxContract.abi,
+          signer
+        );
+        const encodedFunctionCall = box.interface.encodeFunctionData(
+          functionToCall,
+          args
+        );
+        const descriptionHash = ethers.utils.keccak256(
+          ethers.utils.toUtf8Bytes(proposalDescription)
+        );
+        const governor = new ethers.Contract(
+          "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+          GovernorContract.abi,
+          signer
+        );
+        console.log("Queueing...");
+        const queueTx = await governor.queue(
+          [box.address],
+          [0],
+          [encodedFunctionCall],
+          descriptionHash
+        );
+        await queueTx.wait(1);
+
+        console.log("Executing...");
+        // this will fail on a testnet because you need to wait for the MIN_DELAY!
+        const executeTx = await governor.execute(
+          [box.address],
+          [0],
+          [encodedFunctionCall],
+          descriptionHash
+        );
+        await executeTx.wait(1);
+        console.log(`Box value: ${await box.retrieve()}`);
+        localStorage.clear()
+        proposalExists = false;
+        proposalVoted = false;
+
+      }
+    } else {
+      proposalExists = false;
+      console.log("Please create a proposal first");
+    }
   }
- 
 
   let promisePropose;
   let promiseTx;
   let promiseVote;
   let promiseQueueAndExecute;
 
-  function onClickConnectWallet(){
+  function onClickConnectWallet() {
     promiseTx = connectWallet();
   }
 
-  function onClickHandlePropose(){
+  function onClickHandlePropose() {
     promisePropose = proposeBoxContract();
   }
 
-  function onClickHandleVoteNo(){
+  function onClickHandleVoteNo() {
     promiseVote = vote("no");
   }
-  function onClickHandleVoteYes(){
+  function onClickHandleVoteYes() {
     promiseVote = vote("yes");
   }
-  function onClickHandleQueueAndExecute(){
+  function onClickHandleQueueAndExecute() {
     promiseQueueAndExecute = queueAndExecute();
   }
-
 
   $: metaMaskConnected = false;
 </script>
@@ -183,49 +279,49 @@
     <div />
   {:else if metaMaskConnected}
     <div class="text-center">
-      <div>
-        Voting
-      </div>
+      <div>Voting</div>
     </div>
     <div class="text-center">
-      <div>
-        Transaction History
-      </div>
+      <div>Transaction History</div>
     </div>
     <div class="text-center">
-      <div>
-        Active votes
-      </div>
+      <div>Active votes</div>
     </div>
 
-    
     <div class="text-center">
-      <div class="grid grid-cols-1 gap-2">
-        <ComponentVoting/>
+      <div id="proposalBlock" class="grid grid-cols-1 gap-2">
+        <ComponentVoting />
         <button on:click={onClickHandlePropose} class="btn">Propose</button>
       </div>
     </div>
-    <div class="grid grid-cols-1 gap-2">
-    {#await promiseTx}
-      <!-- promise is pending -->
-      <div class="text-center">
-        <button class="btn btn-square loading"></button>
-      </div>
-    {:then value}
+    <div class="grid grid-cols-1 gap-2 text-center">
+      Aktueller Block: {block}
+      {#await promiseTx}
+        <!-- promise is pending -->
+        <div class="text-center">
+          <button class="btn btn-square loading" />
+        </div>
+      {:then value}
         {#each value as t}
-          <ComponentTransactions txAdress={t.transactions[0].hash} txFrom={t.transactions[0].from} txTo={t.transactions[0].to}/>
+          <ComponentTransactions
+            txAdress={t.transactions[0].hash}
+            txFrom={t.transactions[0].from}
+            txTo={t.transactions[0].to}
+          />
         {/each}
-    {/await}
+      {/await}
     </div>
     <div class="text-center">
-        <div class="grid grid-cols-1 gap-2"></div>
-          <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-              <button on:click={onClickHandleVoteYes} class="btn">Yes</button>
-              <button on:click={onClickHandleVoteNo} class="btn">No</button>
-              <button on:click={onClickHandleQueueAndExecute} class="btn">QueueAndExecute</button>
-            </div>
-          </div>
+      <div class="grid grid-cols-1 gap-2" />
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <button on:click={onClickHandleVoteYes} class="btn">Yes</button>
+          <button on:click={onClickHandleVoteNo} class="btn">No</button>
+          <button on:click={onClickHandleQueueAndExecute} class="btn"
+            >QueueAndExecute</button
+          >
+        </div>
+      </div>
     </div>
   {/if}
 </div>

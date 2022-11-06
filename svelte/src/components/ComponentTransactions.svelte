@@ -1,17 +1,19 @@
 <script>
     import { onMount } from "svelte";
 
-    export var txAdress;
-    export var txFrom;
-    export var txTo;
+    export let txAdress;
+    export let txFrom;
+    export let txTo;
 
-    var txA  = "0x000000000000000000..."; 
-    var txF = "0x0000000...";
-    var txT = "0x0000000...";
+    let txA  = "0x000000000000000000..."; 
+    let txF = "0x0000000...";
+    let txT = "0x0000000...";
 
     onMount(async ()=>{
         if(txAdress != null){
             txA = txAdress.slice(0,20) + "..."; 
+        }else{
+          txAdress = "0x000000"
         }
         if(txFrom != null){
             txF = txFrom.slice(0,9)+ "...";
