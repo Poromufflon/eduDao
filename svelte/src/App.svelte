@@ -28,12 +28,17 @@
           signer
         );
     console.log("declaring...");
-    console.log("Step 2: mint token");
-    const contrat= await governorToken.transfer("0x70997970C51812dc3A010C7d01b50e0d17dc79C8",100)
-    //
-    //const eduPowerBalance = await governorToken.transferFrom("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266","0x70997970C51812dc3A010C7d01b50e0d17dc79C8",100)
-    //console.log(eduPowerBalance)
-    console.log("token minted")
+    console.log("Step 2: transfer token to other account");
+    console.log(governorToken.interface)
+    if(accountAdress == "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266"){
+      await governorToken.increaseAllowance("0x70997970C51812dc3A010C7d01b50e0d17dc79C8", 100)
+      const eduPowerBalance = await governorToken.transfer("0x70997970C51812dc3A010C7d01b50e0d17dc79C8",100)
+      console.log(eduPowerBalance)
+      console.log("token transferred")
+    }else{
+      console.log("Not allowed to transfer Token.")
+    }
+   
       
 
 

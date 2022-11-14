@@ -47,7 +47,8 @@
         proposalVoteWay = localStorage.getItem("Voted");
       }
     }
-    for (let i = transactionCount-10; i <= transactionCount; i++) {
+    if(transactionCount < 12){
+      for (let i = 1; i <= transactionCount; i++) {
       await provider.getBlockWithTransactions(i).then((transaction)=>{
         transactions.push(transaction);
         console.log(transaction);
@@ -55,6 +56,17 @@
         console.log(error.name + ' ' + error.message)
       })
     }
+    }else{
+      for (let i = transactionCount-10; i <= transactionCount; i++) {
+      await provider.getBlockWithTransactions(i).then((transaction)=>{
+        transactions.push(transaction);
+        console.log(transaction);
+      }).catch((error)=>{
+        console.log(error.name + ' ' + error.message)
+      })
+    }
+    }
+   
 
     if (transactions.length != 0) {
       setTimeout(() => {
@@ -255,49 +267,6 @@
   }
 
   async function onClickDev() {
-    // get proposal id only from blockchain
-   /*  let realId = localStorage.getItem("proposalID")
-    let args = [69];
-    let functionToCall = "store";
-    let proposalDescription = "Contract#1";
-    const descriptionHash = ethers.utils.keccak256(
-      ethers.utils.toUtf8Bytes(proposalDescription)
-    );
-    const governor = new ethers.Contract(
-      "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
-      GovernorContract.abi,
-      signer
-    );
-    console.log(governor.interface);
-
-    const box = new ethers.Contract(
-      "0xa513e6e4b8f2a923d98304ec87f64353c4d5c853",
-      BoxContract.abi,
-      signer
-    );
-    console.log(box.interface);
-    const encodedFunctionCall = box.interface.encodeFunctionData(
-      functionToCall,
-      args
-    );
-    const hashedPropId = await governor.hashProposal(
-      [box.address],
-      [0],
-      [encodedFunctionCall],
-      descriptionHash
-    );
-    const hashedrealid = BigNumber.from("105704348824217936618812621952337896994109548838345781717919752782827019626800")
-    console.log(`Created ID: ${hashedPropId} Real ID: ${hashedrealid}`)
-     */
-     const governorinterface = new ethers.utils.Interface(
-      GovernorContract.abi
-    );
-     const transaction = await provider.getTransactionReceipt("0xfcb63fd08da46cbf3115c08afe92b0c0ce59af9d43e29cb48d6c47b202b8b8b3");
-     const data = governorinterface.decodeFunctionResult("propose", "0xe0492f86bf3b8d7d0d77fd1ca258d3b6e976ea12cf63e4594202c803027995cf000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb922660000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000b000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002a00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000a513e6e4b8f2a923d98304ec87f64353c4d5c853000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000246057361d00000000000000000000000000000000000000000000000000000000000001a800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f436f6e7472616374233132343232340000000000000000000000000000000000")
-     console.log(data)
-     console.log(transaction)
-
-
   }
 
   $: metaMaskConnected = false;
