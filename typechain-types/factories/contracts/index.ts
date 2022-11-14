@@ -4,4 +4,3 @@
 export * as governanceStandard from "./governance_standard";
 export { Box__factory } from "./Box__factory";
 export { GovernanceToken__factory } from "./GovernanceToken__factory";
-export { Hello__factory } from "./Hello__factory";

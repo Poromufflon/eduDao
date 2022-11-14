@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+//https://github.com/PatrickAlphaC/dao-template used for this Contract, he also used the https://docs.openzeppelin.com/contracts/4.x/wizard to create this contract
+pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";

@@ -1,6 +1,6 @@
 <script>
    import {ethers} from "ethers";
-  import EduDaoLogo from "./images/EduDaoLogo2.svelte";
+  import EduDaoLogo from "./images/EduDaoLogo.svelte";
   import Router from "svelte-spa-router";
   import HomePage from "./routes/HomePage.svelte"
   import AccountPage from "./routes/AccountPage.svelte";

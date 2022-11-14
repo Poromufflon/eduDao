@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
-
-//code from https://github.com/PatrickAlphaC/dao-template
-pragma solidity ^0.8.9;
+//https://github.com/PatrickAlphaC/dao-template used for this Contract, he also used the https://docs.openzeppelin.com/contracts/4.x/wizard to create this contract
+pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 

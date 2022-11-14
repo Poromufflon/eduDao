@@ -676,7 +676,7 @@ export interface GovernorSettings extends BaseContract {
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setProposalThreshold(
@@ -850,7 +850,7 @@ export interface GovernorSettings extends BaseContract {
     target: PromiseOrValue<string>,
     value: PromiseOrValue<BigNumberish>,
     data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setProposalThreshold(
@@ -1289,7 +1289,7 @@ export interface GovernorSettings extends BaseContract {
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setProposalThreshold(
@@ -1466,7 +1466,7 @@ export interface GovernorSettings extends BaseContract {
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setProposalThreshold(

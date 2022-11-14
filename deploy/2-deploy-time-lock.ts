@@ -1,3 +1,5 @@
+//https://github.com/PatrickAlphaC/dao-template used for this script
+
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { MIN_DELAY } from "../helper-hardhat-config";
@@ -6,17 +8,16 @@ const deployTimeLock: DeployFunction = async function (
     hre: HardhatRuntimeEnvironment
 ) {
       // @ts-ignore
-    const {getNamedAccounts,deployments,network} = hre;
+    const {getNamedAccounts,deployments} = hre;
     const { deploy, log } = deployments;
     const { deployer } = await getNamedAccounts();
 
+    //Deploys Timelock
     log("Deploying TimeLock");
-
     const timelock = await deploy("TimeLock", {
         from: deployer,
-        args:[MIN_DELAY, [],[]],
+        args:[MIN_DELAY, [],[], deployer],
         log: true,
-        //wait confirmations:
     });
 
 };

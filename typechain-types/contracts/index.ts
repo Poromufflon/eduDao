@@ -5,4 +5,3 @@ import type * as governanceStandard from "./governance_standard";
 export type { governanceStandard };
 export type { Box } from "./Box";
 export type { GovernanceToken } from "./GovernanceToken";
-export type { Hello } from "./Hello";

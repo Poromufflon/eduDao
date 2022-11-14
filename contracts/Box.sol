@@ -1,6 +1,6 @@
-// contracts/Box.sol
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+//https://github.com/PatrickAlphaC/dao-template used for this Contract.
+pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 

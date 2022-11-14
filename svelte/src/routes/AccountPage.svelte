@@ -1,6 +1,5 @@
 <script>
   import { ethers } from "ethers";
-  import jsonata from "jsonata";
   import ComponentAccountDetails from "../components/ComponentAccountDetails.svelte";
   import GovernanceToken from "../contracts/contracts/GovernanceToken.sol/GovernanceToken.json";
 

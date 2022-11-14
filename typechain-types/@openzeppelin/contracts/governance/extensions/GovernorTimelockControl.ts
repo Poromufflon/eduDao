@@ -681,7 +681,7 @@ export interface GovernorTimelockControl extends BaseContract {
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     state(
@@ -860,7 +860,7 @@ export interface GovernorTimelockControl extends BaseContract {
     target: PromiseOrValue<string>,
     value: PromiseOrValue<BigNumberish>,
     data: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   state(
@@ -1297,7 +1297,7 @@ export interface GovernorTimelockControl extends BaseContract {
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     state(
@@ -1479,7 +1479,7 @@ export interface GovernorTimelockControl extends BaseContract {
       target: PromiseOrValue<string>,
       value: PromiseOrValue<BigNumberish>,
       data: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     state(

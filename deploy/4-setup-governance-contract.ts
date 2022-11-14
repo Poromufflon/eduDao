@@ -1,3 +1,5 @@
+//https://github.com/PatrickAlphaC/dao-template used for this script
+
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 // @ts-ignore
@@ -9,18 +11,19 @@ const setupContracts: DeployFunction = async function (
 ) {
     // @ts-ignore
     const {getNamedAccounts,deployments} = hre;
-    const { deploy, log, get } = deployments;
+    const { log } = deployments;
     const { deployer } = await getNamedAccounts();
 
     const timeLock = await ethers.getContract("TimeLock", deployer);
     const governor = await ethers.getContract("GovernorContract", deployer);
 
     log("Setting up roles...");
-
+    //setting up roles
     const proposerRole = await timeLock.PROPOSER_ROLE();
     const executorRole = await timeLock.EXECUTOR_ROLE();
     const adminRole = await timeLock.TIMELOCK_ADMIN_ROLE();
 
+    //basicly removing executor role abd make the governor proposer (the deployer in this specific case)
     const proposerTx =  await timeLock.grantRole(proposerRole, governor.address);
     await proposerTx.wait(1);
     const executorTx  = await timeLock.grantRole(executorRole, ADRESS_ZERO);

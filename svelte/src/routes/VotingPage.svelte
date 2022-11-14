@@ -47,10 +47,13 @@
         proposalVoteWay = localStorage.getItem("Voted");
       }
     }
-    for (let i = 1; i < transactionCount; i++) {
-      const transaction = await provider.getBlockWithTransactions(i);
-      transactions.push(transaction);
-      console.log(transaction)
+    for (let i = transactionCount-10; i <= transactionCount; i++) {
+      await provider.getBlockWithTransactions(i).then((transaction)=>{
+        transactions.push(transaction);
+        console.log(transaction);
+      }).catch((error)=>{
+        console.log(error.name + ' ' + error.message)
+      })
     }
 
     if (transactions.length != 0) {
