@@ -4,7 +4,6 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract GovernanceToken is ERC20Votes{
   uint256 public s_maxSupply = 100000;

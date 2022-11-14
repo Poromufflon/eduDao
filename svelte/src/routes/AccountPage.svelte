@@ -39,8 +39,9 @@
         );
     
     const eduPowerBalance = await governorToken.balanceOf(accountAdress)
+    console.log(governorToken.interface)
     eduPower = eduPowerBalance
-    ether = balanceInEth.slice(0,6)
+    ether = balanceInEth.slice(0,9)
     adress = accountAdress.slice(0,12) + "...";
 
   }

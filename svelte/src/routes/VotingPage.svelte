@@ -1,5 +1,5 @@
 <script>
-  import { utils, ethers, providers } from "ethers";
+  import { utils, ethers, providers, BigNumber } from "ethers";
   import ComponentActiveVotes from "../components/ComponentActiveVotes.svelte";
   import ComponentContractCreator from "../components/ComponentContractCreator.svelte";
   import ComponentTransactions from "../components/ComponentTransactions.svelte";
@@ -31,7 +31,9 @@
     let transactions = [];
     //safes the logged in account adress
     accountAdress = accounts[0];
-    const transactionCount = await provider.getTransactionCount("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"); 
+    const transactionCount = await provider.getTransactionCount(
+      "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+    );
     const blockNumber = await provider.getBlockNumber();
     block = blockNumber;
     if (blockNumber < 10) {
@@ -45,11 +47,12 @@
         proposalVoteWay = localStorage.getItem("Voted");
       }
     }
-      for (let i = 1; i < transactionCount; i++) {
+    for (let i = 1; i < transactionCount; i++) {
       const transaction = await provider.getBlockWithTransactions(i);
       transactions.push(transaction);
-      }
-    
+      console.log(transaction)
+    }
+
     if (transactions.length != 0) {
       setTimeout(() => {
         provider.on(
@@ -71,6 +74,7 @@
   }
 
   async function proposeBoxContract() {
+    
     if (localStorage.getItem("proposalID") == null && proposalExists == false) {
       let args = [69];
       let functionToCall = "store";
@@ -170,14 +174,14 @@
 
   async function queueAndExecute() {
     if (proposalExists == true) {
-      if(proposalVoted == false){
-        console.log("Please Vote first")
-      }else if(block < blockAfterVote+5){
-        console.log("Still in Voting Time")  
-      }else{
+      if (proposalVoted == false) {
+        console.log("Please Vote first");
+      } else if (block < blockAfterVote + 5) {
+        console.log("Still in Voting Time");
+      } else {
         let args = [69];
-        let functionToCall = "store";
-        let proposalDescription = "Contract#1";
+      let functionToCall = "store";
+      let proposalDescription = "Contract#1";
         const box = new ethers.Contract(
           "0xa513e6e4b8f2a923d98304ec87f64353c4d5c853",
           BoxContract.abi,
@@ -214,10 +218,9 @@
         );
         await executeTx.wait(1);
         console.log(`Box value: ${await box.retrieve()}`);
-        localStorage.clear()
+        localStorage.clear();
         proposalExists = false;
         proposalVoted = false;
-
       }
     } else {
       proposalExists = false;
@@ -246,6 +249,52 @@
   }
   function onClickHandleQueueAndExecute() {
     promiseQueueAndExecute = queueAndExecute();
+  }
+
+  async function onClickDev() {
+    // get proposal id only from blockchain
+   /*  let realId = localStorage.getItem("proposalID")
+    let args = [69];
+    let functionToCall = "store";
+    let proposalDescription = "Contract#1";
+    const descriptionHash = ethers.utils.keccak256(
+      ethers.utils.toUtf8Bytes(proposalDescription)
+    );
+    const governor = new ethers.Contract(
+      "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+      GovernorContract.abi,
+      signer
+    );
+    console.log(governor.interface);
+
+    const box = new ethers.Contract(
+      "0xa513e6e4b8f2a923d98304ec87f64353c4d5c853",
+      BoxContract.abi,
+      signer
+    );
+    console.log(box.interface);
+    const encodedFunctionCall = box.interface.encodeFunctionData(
+      functionToCall,
+      args
+    );
+    const hashedPropId = await governor.hashProposal(
+      [box.address],
+      [0],
+      [encodedFunctionCall],
+      descriptionHash
+    );
+    const hashedrealid = BigNumber.from("105704348824217936618812621952337896994109548838345781717919752782827019626800")
+    console.log(`Created ID: ${hashedPropId} Real ID: ${hashedrealid}`)
+     */
+     const governorinterface = new ethers.utils.Interface(
+      GovernorContract.abi
+    );
+     const transaction = await provider.getTransactionReceipt("0xfcb63fd08da46cbf3115c08afe92b0c0ce59af9d43e29cb48d6c47b202b8b8b3");
+     const data = governorinterface.decodeFunctionResult("propose", "0xe0492f86bf3b8d7d0d77fd1ca258d3b6e976ea12cf63e4594202c803027995cf000000000000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb922660000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000001a00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000b000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002a00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000a513e6e4b8f2a923d98304ec87f64353c4d5c853000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000246057361d00000000000000000000000000000000000000000000000000000000000001a800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000f436f6e7472616374233132343232340000000000000000000000000000000000")
+     console.log(data)
+     console.log(transaction)
+
+
   }
 
   $: metaMaskConnected = false;
@@ -290,6 +339,7 @@
       <div id="proposalBlock" class="grid grid-cols-1 gap-2">
         <ComponentVoting />
         <button on:click={onClickHandlePropose} class="btn">Propose</button>
+        <button on:click={onClickDev} class="btn">DevButton</button>
       </div>
     </div>
     <div class="grid grid-cols-1 gap-2 text-center">
